@@ -1,5 +1,18 @@
 # moodify_me
-Sentimental Analysis Practice
+Moodify is a web application messaging platform that allows users to send messages to each other with expressive emojis attached at the end of the message. These emojis are carefully picked through a machine learning algorithm that quantifies each text message. Each text message will be categorized into a specific "mood" which corresponds to that emoji. 
+
+The link to the live website is here: *INSERT LINK HERE*
+
+Currently, no advancements will be made towards making this into an android application or extending the the algorithm outside of the web application since this is a summer term project. However, this application will likely be hosted on a live server.
+
+####Timeline
+June 7th: Initialize Web Application and Texting Platform
+
+June 14th: Integrate emojis in messages and make sure that live messaging works
+
+June 23th: Train labeled data from application messages into 6 basic categories: happiness, sadness, disgust, fear, surprise, and anger.
+
+June 30th: Full basic functionality of application
 
 ## Learning Center and Notes
 ##### Courtesy of developers.google.com
