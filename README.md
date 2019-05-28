@@ -5,14 +5,24 @@ The link to the live website is here: *INSERT LINK HERE*
 
 Currently, no advancements will be made towards making this into an android application or extending the the algorithm outside of the web application since this is a summer term project. However, this application will likely be hosted on a live server.
 
-####Timeline
-June 7th: Initialize Web Application and Texting Platform
+#### Timeline
+June 7th: Initialize web application with a restful api using MySQL.
 
-June 14th: Integrate emojis in messages and make sure that live messaging works
+June 14th: Basic registering function to have authenticated users.
 
-June 23th: Train labeled data from application messages into 6 basic categories: happiness, sadness, disgust, fear, surprise, and anger.
+June 14th: Initialize chatroom platform with a link.
 
-June 30th: Full basic functionality of application
+June 23rd: Make sure website looks presentable and easy to use.
+
+June 30th: Integrate emojis in messages and make sure that live messaging works.
+
+July 6th: Clean a large sample size of messages stored in the database and label it for testing.
+
+July 13th: Train labeled data from application messages into 6 basic categories: happiness, sadness, disgust, fear, surprise, and anger.
+
+July 20th: General program testing and test that the algorithm works fine.
+
+July 27th: Full basic functionality of application with commented code and complete documentation
 
 ## Learning Center and Notes
 ##### Courtesy of developers.google.com
