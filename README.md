@@ -6,7 +6,7 @@ The link to the live website is here: *INSERT LINK HERE*
 Currently, no advancements will be made towards making this into an android application or extending the the algorithm outside of the web application since this is a summer term project. However, this application will likely be hosted on a live server.
 
 #### Timeline
-June 7th: Initialize web application with a restful api using MySQL.
+June 7th: Initialize web application with a restful api using MongoDB atlas.
 
 June 14th: Basic registering function to have authenticated users.
 
@@ -49,7 +49,25 @@ An unlabeled example contains features but not the label. {features, ?} : (x,y)
     * Classification: this type of model predicts discrete values. This answers the following:
         * Is a given email message spam or not spam?
         * Is this an image of a dog, a cat, or a hamster?
-* Linear Regression: a method for finding the straight line or hyperplane that best fits a set of points.    
+* Linear Regression: a method for finding the straight line or hyperplane that best fits a set of points.   
+
+### Setup
+
+In order to begin to setup our program first ensure you have a Python version 3.7 or higher installed on your machine.
+
+* Begin by cloning the repository into a desired directory.
+
+* Once cloned we must begin to install the required dependancies, download flask and pymongo (either through pip or through some IDE installer)
+
+* Next we must setup the pymongo server to load data into
+   * create a mongodb atlas account here: https://www.mongodb.com/cloud/atlas
+   * create a cluster under any name you wish
+   * whitelist your IP and download some sort of client in order to access the database by following the connect instructions (compass is recommended)
+   * take the connection link given by mongodb and concatnate "?retryWrites=true" to the end of it and fill in the part with <password> in the link with connection account password you created
+   * take the concatnated link and put it into the location marked "here" in line 9 of main.py in the root directory of the program:
+      dbclient = pymongo.MongoClient('here')
+ 
+Your all set, run the program and enjoy!
 
 #### Some recommended data sets to work with (not necessarily S.A. Practice)
 https://www.kaggle.com/nltkdata/movie-review
