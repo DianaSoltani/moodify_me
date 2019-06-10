@@ -1,2 +1,7 @@
 .idea
-
+__pycache__/
+.vscode/
+journal/
+diagnostic.data/
+Github.VisualStudio*
+secret.py
