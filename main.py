@@ -1,10 +1,12 @@
 
 # Import Flask module to create a web server
-from flask import Flask, render_template, request, session, redirect, g, url_for
+from flask import Flask, render_template, request, session, redirect, g, url_for, flash
 import os
+import hashlib
 # Import the database
 import pymongo
 import secret
+import sys
 
 
 
@@ -20,10 +22,19 @@ app.secret_key = os.urandom(24)
 def login():
     #sees if the user made a POST request
     if request.method == 'POST':   
-        #invalidates their old session     
+        #invalidates their old session  
+
         session.pop('user', None)
         #sees if their password matches the intended password
-        if request.form['password'] == 'password':
+        #first get the user from the database
+        user = db.user.find_one({"username": request.form['username']})
+        if(user is None):
+            return render_template("login.html")
+        
+        encodedHash =  str(hashlib.sha256(request.form['password'].encode('utf-8')).hexdigest())
+        userPass =  user['password']
+        
+        if encodedHash == userPass:
             session['user'] = request.form['username']
             #it does so redirect them to the homepage
             return redirect(url_for('homepage'))
@@ -40,9 +51,25 @@ def homepage():
     return redirect(url_for('login'))
 
 #page used to register the user
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template("register.html")
+    if request.method == 'POST':   
+        #invalidates their old session     
+        session.pop('user', None)
+        #saves the item into the database and transforms the password using sha256 for security
+        encodedHash =  hashlib.sha256(request.form['password'].encode('utf-8')).hexdigest()
+        user = db.user.find_one({"username": request.form['username']})
+        if user is None:
+            db.user.insert_one({ "username": request.form['username'], "password": encodedHash})
+        else:
+            #the usernames already in the database, dont readd it
+            #flash('Please try a different username', 'warning') this does not send a warning to the user before the page
+            #refreshes, we must find a way to send them the warning before the page refreshes
+            return render_template('register.html')
+        
+        return redirect(url_for('login'))
+
+    return render_template('register.html')
 
 #if the user is in session, gives g.user said session
 @app.before_request
@@ -68,8 +95,6 @@ def dropsesison():
 # Set debug=True to have Python errors to appear on the page to trace errors.
 if __name__ == "__main__":
 
-    #Some basic database stuff
-    db.user.insert_one({"id" : 1, "name": "Bob"})
     app.run(debug = True)
 
     
