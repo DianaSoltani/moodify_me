@@ -1,10 +1,11 @@
 .idea
-__pycache__/
+server/__pycache__/
 .vscode/
 journal/
 diagnostic.data/
 Github.VisualStudio*
-secret.py
+venv/
+server/secret.py
 
 # dependencies
 moodify-ui/app/node_modules
