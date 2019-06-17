@@ -5,3 +5,19 @@ journal/
 diagnostic.data/
 Github.VisualStudio*
 secret.py
+
+# dependencies
+moodify-ui/app/node_modules
+
+# testing
+moodify-ui/app/coverage
+
+# production
+moodify-ui/app/build
+
+# misc
+.DS_Store
+.env
+moodify-ui/npm-debug.log*
+moodify-ui/yarn-debug.log*
+moodify-ui/yarn-error.log*
