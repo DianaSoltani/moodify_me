@@ -6,55 +6,53 @@ import hashlib
 from flask_pymongo import PyMongo
 from server import secret
 
-# Our current file is represented as '__name__'. So we want
+# Our current file is represented as "__name__". So we want
 # Flask to use this file to create the web application.
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-# logs onto mongodb's database, we are using the atlas client
+# logs onto mongodb"s database, we are using the atlas client
 dbclient = PyMongo(app, uri=secret.secret_key)
 db = dbclient.db.profiles
 
 
 # Routing for the default page
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/login", methods=["POST"])
 def login():
-    # sees if the user made a POST request
-    if request.method == 'POST':
-        # invalidates their old session
+    # invalidates their old session
+    session.pop("user", None)
+    username = request.get_json()["username"]
+    password = request.get_json()["password"]
+    # sees if their password matches the intended password
+    # first get the user from the database
+    user = db.user.find_one({"username": username})
+    if (user is None):
+        return jsonify(message="Invalid username/password"), 409
 
-        session.pop('user', None)
-        # sees if their password matches the intended password
-        # first get the user from the database
-        user = db.user.find_one({"username": request.form['username']})
-        if (user is None):
-            return render_template("login.html")
+    hashed_pwd = str(hashlib.sha256(password.encode("utf-8")).hexdigest())
+    user_pwd = user["password"]
 
-        encodedHash = str(hashlib.sha256(request.form['password'].encode('utf-8')).hexdigest())
-        userPass = user['password']
-
-        if encodedHash == userPass:
-            session['user'] = request.form['username']
-            # it does so redirect them to the homepage
-            return redirect(url_for('homepage'))
-    # password was either incorrect or nothing happened
-    return render_template("login.html")
+    if hashed_pwd == user_pwd:
+        session["user"] = username
+        # it does so redirect them to the homepage
+        return jsonify(message="Logged in")
+    # password was incorrect
+    return jsonify(message="Invalid username/password"), 401
 
 
 # the homepage of our project
-@app.route('/homepage')
+@app.route("/home")
 def homepage():
     # ensures the user had a session in order to get to the page
     if g.user:
-        return render_template('home.html')
+        return jsonify(message="Homepage")
     # otherwise sends them back to the login page
-    return redirect(url_for('login'))
+    return jsonify(message="Not logged in"), 403
 
 
 # page used to register the user
 @app.route("/register", methods=["POST"])
 def register():
-    result = None
     # invalidates their old session
     session.pop("user", None)
     username = request.get_json()["username"]
@@ -63,34 +61,32 @@ def register():
     user = db.user.find_one({"username": username})
     if user is None:
         db.user.insert_one({"username": username, "password": password})
-        result = jsonify(message="Registered user successfully")
-    else:
-        # the usernames already in the database, dont readd it
-        result = jsonify(message="Username already taken"), 409
-    return result
+        return jsonify(message="Registered user successfully")
+    # the usernames already in the database, dont readd it
+    return jsonify(message="Username already taken"), 409
 
 
 # if the user is in session, gives g.user said session
 @app.before_request
 def before_request():
     g.user = None
-    if 'user' in session:
-        g.user = session['user']
+    if "user" in session:
+        g.user = session["user"]
 
 
 # gets a users session, otherwise shows "Not logged in" if there is no session
-@app.route('/getsession')
+@app.route("/getsession")
 def getsession():
-    if 'user' in session:
-        return session['user']
-    return 'Not logged in!'
+    if "user" in session:
+        return session["user"]
+    return "Not logged in!"
 
 
 # drops a users session and shows "Dropped"
-@app.route('/dropsession')
+@app.route("/dropsession")
 def dropsesison():
-    session.pop('user', None)
-    return 'Dropped!'
+    session.pop("user", None)
+    return "Dropped!"
 
 
 # This will run the application.

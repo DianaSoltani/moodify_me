@@ -3,6 +3,7 @@ import axios from "axios";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
+import {Link} from "react-router-dom";
 
 class Register extends Component
 {
@@ -12,48 +13,52 @@ class Register extends Component
         valid: true
     };
 
-    onChange = event => {
-        this.setState({ [event.target.id]: event.target.value, valid: true })
+    onChange = event =>
+    {
+        this.setState({[event.target.id]: event.target.value, valid: true})
     };
 
-    onSubmit = event => {
-      event.preventDefault();
-      const newUser = {
-          username: this.state.username,
-          password: this.state.password
-      };
-      this.register(newUser).then(response =>
-      {
-          if (response.status === 200)
-              //TODO: see if the redirection can be done with a delay
-            this.props.history.push(`/login`);
-          else
-          {
-              //TODO: explicit check to see if error status is 409 or 500
-              this.setState({
-                  username: this.state.username,
-                  password: "",
-                  valid: false
-              });
+    onSubmit = event =>
+    {
+        event.preventDefault();
+        const newUser = {
+            username: this.state.username,
+            password: this.state.password
+        };
+        this.register(newUser).then(response =>
+        {
+            if (response.status === 200)
+            //TODO: see if the redirection can be done with a delay
+                setTimeout(() => this.props.history.push(`/login`), 1000);
+            else
+            {
+                //TODO: explicit check to see if error status is 409 or 500
+                this.setState({
+                    username: this.state.username,
+                    password: "",
+                    valid: false
+                });
 
-          }
-      });
+            }
+        });
     };
 
-    register = user => {
-    return axios
-        .post("/register", {
-            username: user.username,
-            password: user.password
-        })
-        .then(response => {
-            console.log(response);
-            return response;
-        })
-        .catch(error => {
-            console.log(error);
-            return error.response;
-        })
+    register = user =>
+    {
+        return axios
+            .post("/register", {
+                username: user.username,
+                password: user.password
+            })
+            .then(response =>
+            {
+                return response;
+            })
+            .catch(error =>
+            {
+                console.log(error);
+                return error.response;
+            })
     };
 
     render()
@@ -75,6 +80,7 @@ class Register extends Component
                                       value={this.state.password} onChange={this.onChange}/>
                     </Form.Group>
                     <Button variant="primary" type="submit">Register</Button>
+                    <Link className="d-inline-flex m-1" to="/login">Already have an account? Login Here</Link>
                 </Form>
             </div>
         );

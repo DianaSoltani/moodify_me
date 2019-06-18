@@ -1,24 +1,12 @@
-import React from "react";
-import NavBar from "react-bootstrap/Navbar";
-import {Link} from "react-router-dom";
-import Nav from "react-bootstrap/Nav";
+import React,{Component} from "react";
 
-export const Home = () => (
+class Home extends Component
+{
+    render()
+    {
+        return <h1>TEST PROFILE PAGE</h1>;
+    }
+}
 
-  <NavBar bg="dark" variant="dark">
-      <NavBar.Brand as={Link} to="/">Moodify</NavBar.Brand>
-      <Nav className="mr-auto">
-          <Nav.Item>
-              <Nav.Link as={Link} to="/">Home</Nav.Link>
-          </Nav.Item>
-      </Nav>
-      <Nav>
-          <Nav.Item>
-              <Nav.Link as={Link} to="/register">Register</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-              <Nav.Link as={Link} to="/login">Login</Nav.Link>
-          </Nav.Item>
-      </Nav>
-  </NavBar>
-);
+
+export default Home
