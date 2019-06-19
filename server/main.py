@@ -1,10 +1,10 @@
 # Import Flask module to create a web server
-from flask import Flask, render_template, request, session, redirect, g, url_for, jsonify
+from flask import Flask, request, session, g, jsonify
 import os
 import hashlib
 # Import the database
-from flask_pymongo import PyMongo
-from server import secret
+import pymongo
+import secret
 
 # Our current file is represented as "__name__". So we want
 # Flask to use this file to create the web application.
@@ -12,8 +12,8 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 # logs onto mongodb"s database, we are using the atlas client
-dbclient = PyMongo(app, uri=secret.secret_key)
-db = dbclient.db.profiles
+dbclient = pymongo.MongoClient(secret.secret_key)
+db = dbclient.profiles
 
 
 # Routing for the default page
@@ -26,7 +26,7 @@ def login():
     # sees if their password matches the intended password
     # first get the user from the database
     user = db.user.find_one({"username": username})
-    if (user is None):
+    if user is None:
         return jsonify(message="Invalid username/password"), 409
 
     hashed_pwd = str(hashlib.sha256(password.encode("utf-8")).hexdigest())
