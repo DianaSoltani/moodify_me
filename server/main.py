@@ -73,20 +73,11 @@ def before_request():
     if "user" in session:
         g.user = session["user"]
 
-
-# gets a users session, otherwise shows "Not logged in" if there is no session
-@app.route("/getsession")
-def getsession():
-    if "user" in session:
-        return session["user"]
-    return "Not logged in!"
-
-
 # drops a users session and shows "Dropped"
-@app.route("/dropsession")
-def dropsesison():
+@app.route("/logout", methods=["GET"])
+def logout():
     session.pop("user", None)
-    return "Dropped!"
+    return jsonify(message="Logged out")
 
 
 # This will run the application.
