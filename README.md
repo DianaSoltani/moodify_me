@@ -14,11 +14,11 @@ June 30th: Create messaging system to allow back and forth messages between user
 
 July 6th: Integrate emojis into messages (if not already integrated). Begin making website more presentable for final product and finish connecting link if necessary.
 
-July 14th: Begin finishing up website design if not already finished. Begin to start training the data.
+July 14th: Begin finishing up website design if not already finished. Begin to start organizing the data and develop a general approach.
 
-July 20th: Train labeled data from application messages into 6 basic categories: happiness, sadness, disgust, fear, surprise, and anger.
+July 20th: Label data from application messages into 6 basic categories: happiness, sadness, disgust, fear, surprise, and anger. Use lables towards general algorithm.
 
-July 27th: Further program testing and test that the algorithm works fine.
+July 27th: Further program testing and make adjustments to the algorithm.
 
 August 5th: Full basic functionality of application with commented code and complete documentation
 
@@ -63,9 +63,11 @@ In order to begin to setup our program first ensure you have a Python version 3.
    * whitelist your IP and download some sort of client in order to access the database by following the connect instructions (compass is recommended)
    * take the connection link given by mongodb and concatnate "?retryWrites=true" to the end of it and fill in the part with <password> in the link with connection account password you created
    * take the concatnated link and put it into the location marked "here" in line 9 of main.py in the root directory of the program:
-      dbclient = pymongo.MongoClient('here')
+      dbclient = pymongo.MongoClient('here') or alternatively put it into the string in secret.py and it will be used for you
  
-Your all set, run the program and enjoy!
+* Finally, in the moodify-ui/app folder run npm install to install all of the requirements necessary for the react side of the program
+
+Once all of that is done, simply run start.py if you are on a windows machine, otherwise open up two terminals and run npm start in the moodify-ui/app folder and main.py in the server folder on seperate terminals
 
 #### Some recommended data sets to work with (not necessarily S.A. Practice)
 https://www.kaggle.com/nltkdata/movie-review
