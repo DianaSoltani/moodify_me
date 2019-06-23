@@ -6,23 +6,21 @@ The link to the live website is here: *INSERT LINK HERE*
 Currently, no advancements will be made towards making this into an android application or extending the the algorithm outside of the web application since this is a summer term project. However, this application will likely be hosted on a live server.
 
 #### Timeline
-June 7th: Initialize web application with a restful api using MongoDB atlas.
+*June 7th: Initialize web application with a restful api using MongoDB atlas.*
 
-June 14th: Basic registering function to have authenticated users.
+*June 14th: Basic registering function to have authenticated users.*
 
-June 14th: Initialize chatroom platform with a link.
+June 30th: Create messaging system to allow back and forth messages between users. Connect it to a link.
 
-June 23rd: Make sure website looks presentable and easy to use.
+July 6th: Integrate emojis into messages (if not already integrated). Begin making website more presentable for final product and finish connecting link if necessary.
 
-June 30th: Integrate emojis in messages and make sure that live messaging works.
+July 14th: Begin finishing up website design if not already finished. Begin to start training the data.
 
-July 6th: Clean a large sample size of messages stored in the database and label it for testing.
+July 20th: Train labeled data from application messages into 6 basic categories: happiness, sadness, disgust, fear, surprise, and anger.
 
-July 13th: Train labeled data from application messages into 6 basic categories: happiness, sadness, disgust, fear, surprise, and anger.
+July 27th: Further program testing and test that the algorithm works fine.
 
-July 20th: General program testing and test that the algorithm works fine.
-
-July 27th: Full basic functionality of application with commented code and complete documentation
+August 5th: Full basic functionality of application with commented code and complete documentation
 
 ## Learning Center and Notes
 ##### Courtesy of developers.google.com
