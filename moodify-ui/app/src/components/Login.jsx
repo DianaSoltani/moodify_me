@@ -3,7 +3,7 @@ import axios from "axios";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
 class Login extends Component
 {
@@ -29,10 +29,9 @@ class Login extends Component
         {
             if (response.status === 200)
             {
-                this.props.handleAppAuth();
+                this.props.handleAppAuth(this.state.username);
                 this.props.history.push("/");
-            }
-            else
+            } else
             {
                 this.setState({
                     username: this.state.username,
@@ -56,7 +55,6 @@ class Login extends Component
             })
             .catch(error =>
             {
-                console.log(error);
                 return error.response;
             })
     };
@@ -75,7 +73,8 @@ class Login extends Component
                     </Form.Group>
                     <Form.Group controlId="password">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control required isInvalid={!this.state.valid} type="password" placeholder="Enter your password"
+                        <Form.Control required isInvalid={!this.state.valid} type="password"
+                                      placeholder="Enter your password"
                                       value={this.state.password} onChange={this.onChange}/>
                     </Form.Group>
                     <Button variant="primary" type="submit">Login</Button>

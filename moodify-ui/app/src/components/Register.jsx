@@ -18,6 +18,7 @@ class Register extends Component
         this.setState({[event.target.id]: event.target.value, valid: true})
     };
 
+    // TODO: perform checks to make sure that username can't have spaces and capitalization
     onSubmit = event =>
     {
         event.preventDefault();
@@ -28,17 +29,15 @@ class Register extends Component
         this.register(newUser).then(response =>
         {
             if (response.status === 200)
-            //TODO: see if the redirection can be done with a delay
                 setTimeout(() => this.props.history.push(`/login`), 1000);
             else
             {
-                //TODO: explicit check to see if error status is 409 or 500
+                // TODO: explicit check to see if error status is 409 or 500
                 this.setState({
                     username: this.state.username,
                     password: "",
                     valid: false
                 });
-
             }
         });
     };
@@ -52,11 +51,11 @@ class Register extends Component
             })
             .then(response =>
             {
+                this.setState({"username": response.data.username});
                 return response;
             })
             .catch(error =>
             {
-                console.log(error);
                 return error.response;
             })
     };

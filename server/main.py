@@ -3,16 +3,18 @@ from flask import Flask, request, session, g, jsonify
 import os
 import hashlib
 # Import the database
-import pymongo
+from pymongo import MongoClient
+from flask_socketio import SocketIO, emit, join_room, leave_room
 import secret
 
 # Our current file is represented as "__name__". So we want
 # Flask to use this file to create the web application.
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+socketio = SocketIO(app)
 
 # logs onto mongodb"s database, we are using the atlas client
-dbclient = pymongo.MongoClient(secret.secret_key)
+dbclient = MongoClient(secret.secret_key)
 db = dbclient.profiles
 
 
@@ -35,7 +37,7 @@ def login():
     if hashed_pwd == user_pwd:
         session["user"] = username
         # it does so redirect them to the homepage
-        return jsonify(message="Logged in")
+        return jsonify({"username": username})
     # password was incorrect
     return jsonify(message="Invalid username/password"), 401
 
@@ -45,7 +47,7 @@ def login():
 def homepage():
     # ensures the user had a session in order to get to the page
     if g.user:
-        return jsonify(message="Homepage")
+        return jsonify({"username": g.user})
     # otherwise sends them back to the login page
     return jsonify(message="Not logged in"), 403
 
@@ -60,11 +62,11 @@ def register():
     password = hashlib.sha256(request.get_json()["password"].encode("utf-8")).hexdigest()
     user = db.user.find_one({"username": username})
     if user is None:
-        db.user.insert_one({"username": username, "password": password})
-        return jsonify(message="Registered user successfully")
-    # the usernames already in the database, dont readd it
+        db.user.insert_one({"username": username, "password": password, "rooms": []})
+        emit("new_user", {"username": username})
+        return jsonify({"username": username})
+    # the username is already in the database, dont read it
     return jsonify(message="Username already taken"), 409
-
 
 # if the user is in session, gives g.user said session
 @app.before_request
@@ -80,7 +82,59 @@ def logout():
     return jsonify(message="Logged out")
 
 
-# This will run the application.
-# Set debug=True to have Python errors to appear on the page to trace errors.
+@app.route("/get_users", methods=["GET"])
+def get_users():
+    users = db.user.find(projection={"_id": False, "password": False})
+    usernames = []
+    for user in list(users):
+        usernames.append(user["username"])
+    return jsonify({"users": usernames})
+
+@app.route("/<username>/get_rooms", methods=["GET"])
+def get_user_rooms(username):
+    user_data = db.user.find(filter={"username": username}, projection={"_id": False, "rooms": True})[0]
+    room_names = [room for room in user_data["rooms"]]
+    rooms = db.rooms.find(projection={"_id": False})
+    rooms = filter(lambda room: room["roomName"] in room_names, rooms)
+    return jsonify({"rooms": list(rooms)})
+
+
+@socketio.on("connect")
+def handle_connect():
+    if "user" in session:
+        username = session["user"]
+        print("%s has come online" % username)
+        emit("connect", {"username": username})
+    else:
+        return False
+
+
+@socketio.on("disconnect")
+def handle_disconnect():
+    print("%s has gone offline" % session["user"])
+
+
+@socketio.on("new_message")
+def handle_message(data):
+    message = data["message"]
+    room = data["room"]
+    db.rooms.update_one(filter={"roomName": room}, update={"$push": {"messages": message}})
+    emit("new_message", {"messageData": data}, room=room)
+
+
+@socketio.on("join")
+def handle_join(data):
+    username = data["username"]
+    room = data["room"]
+    join_room(room)
+    emit("room_opened", {"roomName": room}, broadcast=True)
+    if data["is_first_join"]:
+        db.rooms.update_one(filter={"roomName": room}, update={"$setOnInsert": {"messages": []}}, upsert=True)
+        db.user.update_one(filter={"username": username}, update={"$addToSet": {"rooms": room}})
+        for user in room.split(" "):
+            db.user.update_one(filter={"username": user}, update={"$addToSet": {"rooms": room}})
+
+
+# This will run the application
 if __name__ == "__main__":
-    app.run(debug=True)
+    socketio.run(app, debug=True)

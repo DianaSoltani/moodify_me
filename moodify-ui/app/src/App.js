@@ -7,33 +7,42 @@ import {Logout} from "./components/Logout";
 import NavBar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import axios from "axios";
+import io from "socket.io-client";
 
 class App extends Component
 {
+    socket;
     state = {
         promiseResolved: null,
-        authenticated: false
+        authenticated: false,
+        username: ""
     };
+
     isAuthenticated()
     {
         return axios.get("/home")
-            .then(() => {return true;})
+            .then(response =>
+            {
+                this.setState({username: response.data.username});
+                return true;
+            })
             .catch(error =>
             {
-                console.log(error);
                 return false;
             });
     }
 
     componentDidMount()
     {
-        this.isAuthenticated().then(authenticated => {
+        this.isAuthenticated().then(authenticated =>
+        {
             this.authenticate(authenticated)
         })
     }
 
-    authenticate = (authenticated) => {
-        this.setState({promiseResolved: true, authenticated: authenticated})
+    authenticate = (authenticated) =>
+    {
+        this.setState({promiseResolved: true, authenticated: authenticated});
     };
 
     renderAuthNav()
@@ -57,6 +66,14 @@ class App extends Component
                 </Nav>
             );
     }
+
+    initSocket()
+    {
+        if (this.socket === undefined)
+            this.socket = io("http://localhost:5000");
+        return this.socket;
+    }
+
     render()
     {
         return (
@@ -69,17 +86,30 @@ class App extends Component
                                 <Nav.Link as={Link} to="/">Home</Nav.Link>
                             </Nav.Item>
                         </Nav>
-                        { this.renderAuthNav() }
+                        {this.renderAuthNav()}
                     </NavBar>
                     <Route exact path="/" render={() => (
-                        this.state.promiseResolved === null ? null : (this.state.authenticated ? (<Home/>) : (<Redirect to="/login"/>))
+                        this.state.promiseResolved === null ? null : (this.state.authenticated ? (
+                            <Home socket={this.initSocket()} username={this.state.username}/>) : (
+                            <Redirect to="/login"/>))
                     )}/>
                     <Route exact path="/register" component={Register}/>
                     <Route exact path="/login" render={props => (
-                        <Login {...props} handleAppAuth={() => this.authenticate(true)}/>
+                        <Login {...props} handleAppAuth={(username) =>
+                        {
+                            this.authenticate(true);
+                            this.socket = io("http://localhost:5000");
+                            this.setState({username: username});
+                        }}/>
                     )}/>
                     <Route exact path="/logout" render={props => (
-                        <Logout {...props} handleAppAuth={() => this.authenticate(false)}/>
+                        <Logout {...props} handleAppAuth={() =>
+                        {
+                            this.authenticate(false);
+                            this.socket.disconnect();
+                            this.setState({username: ""});
+                        }
+                        }/>
                     )}/>
                 </Router>
             </React.Fragment>
