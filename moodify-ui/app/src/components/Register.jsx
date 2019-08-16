@@ -3,7 +3,7 @@ import axios from "axios";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 
 class Register extends Component
 {
@@ -62,6 +62,8 @@ class Register extends Component
 
     render()
     {
+        if (this.props.isAuthenticated)
+            return <Redirect to="/"/>;
         return (
             <div className="min-vh-100 d-flex justify-content-center align-items-center">
                 <Form onSubmit={this.onSubmit}>

@@ -93,9 +93,11 @@ class App extends Component
                             <Home socket={this.initSocket()} username={this.state.username}/>) : (
                             <Redirect to="/login"/>))
                     )}/>
-                    <Route exact path="/register" component={Register}/>
+                    <Route exact path="/register" render={props => (
+                        <Register {...props} isAuthenticated={this.state.authenticated}/>
+                        )}/>
                     <Route exact path="/login" render={props => (
-                        <Login {...props} handleAppAuth={(username) =>
+                        <Login {...props} isAuthenticated={this.state.authenticated} handleAppAuth={(username) =>
                         {
                             this.authenticate(true);
                             this.socket = io("http://localhost:5000");

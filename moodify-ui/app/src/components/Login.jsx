@@ -3,7 +3,7 @@ import axios from "axios";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 
 class Login extends Component
 {
@@ -61,6 +61,8 @@ class Login extends Component
 
     render()
     {
+        if (this.props.isAuthenticated)
+            return <Redirect to="/"/>;
         return (
             <div className="min-vh-100 d-flex justify-content-center align-items-center">
                 <Form onSubmit={this.onSubmit}>
