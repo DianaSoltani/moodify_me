@@ -1,12 +1,11 @@
-import React from "react";
 import axios from "axios";
-import {Redirect} from "react-router-dom";
 
 export const Logout = props =>
 {
     axios.get("/logout").then(() =>
     {
         props.handleAppAuth();
+        props.history.push(`/login`);
     });
-    return <Redirect to="/login"/>;
+    return null;
 };

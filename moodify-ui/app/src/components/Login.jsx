@@ -28,10 +28,8 @@ class Login extends Component
         this.login(user).then(response =>
         {
             if (response.status === 200)
-            {
                 this.props.handleAppAuth(this.state.username);
-                this.props.history.push("/");
-            } else
+            else
             {
                 this.setState({
                     username: this.state.username,

@@ -11,38 +11,34 @@ import io from "socket.io-client";
 
 class App extends Component
 {
-    socket;
     state = {
-        promiseResolved: null,
+        promiseResolved: undefined,
         authenticated: false,
-        username: ""
+        username: "",
+        socket: undefined
     };
 
     isAuthenticated()
     {
         return axios.get("/home")
-            .then(response =>
-            {
-                this.setState({username: response.data.username});
-                return true;
-            })
-            .catch(error =>
-            {
-                return false;
-            });
+            .then(response => response.data.username)
+            .catch(error => "");
     }
 
-    componentDidMount()
+    async componentDidMount()
     {
-        this.isAuthenticated().then(authenticated =>
-        {
-            this.authenticate(authenticated)
-        })
+        const username = await this.isAuthenticated();
+        this.authenticate(username !== "", username);
     }
 
-    authenticate = (authenticated) =>
+    authenticate = (authenticated, username = this.state.username) =>
     {
-        this.setState({promiseResolved: true, authenticated: authenticated});
+        this.setState({
+            promiseResolved: true,
+            authenticated: authenticated,
+            username: username,
+            socket: this.state.socket === undefined ? (authenticated ? this.createSocket() : undefined) : this.state.socket
+        });
     };
 
     renderAuthNav()
@@ -67,11 +63,19 @@ class App extends Component
             );
     }
 
-    initSocket()
+    createSocket()
     {
-        if (this.socket === undefined)
-            this.socket = io("http://localhost:5000");
-        return this.socket;
+        return io("http://localhost:5000");
+    }
+
+    renderLandingPage()
+    {
+        if (this.state.promiseResolved === undefined)
+            return undefined;
+        else if (this.state.authenticated)
+            return <Home socket={this.state.socket} username={this.state.username}/>;
+        else
+            return <Redirect to="/login"/>;
     }
 
     render()
@@ -88,30 +92,20 @@ class App extends Component
                         </Nav>
                         {this.renderAuthNav()}
                     </NavBar>
-                    <Route exact path="/" render={() => (
-                        this.state.promiseResolved === null ? null : (this.state.authenticated ? (
-                            <Home socket={this.initSocket()} username={this.state.username}/>) : (
-                            <Redirect to="/login"/>))
-                    )}/>
+                    <Route exact path="/" render={() => this.renderLandingPage()}/>
                     <Route exact path="/register" render={props => (
                         <Register {...props} isAuthenticated={this.state.authenticated}/>
-                        )}/>
+                    )}/>
                     <Route exact path="/login" render={props => (
-                        <Login {...props} isAuthenticated={this.state.authenticated} handleAppAuth={(username) =>
-                        {
-                            this.authenticate(true);
-                            this.socket = io("http://localhost:5000");
-                            this.setState({username: username});
-                        }}/>
+                        <Login {...props} isAuthenticated={this.state.authenticated}
+                               handleAppAuth={username => this.authenticate(true, username)}/>
                     )}/>
                     <Route exact path="/logout" render={props => (
                         <Logout {...props} handleAppAuth={() =>
                         {
-                            this.authenticate(false);
-                            this.socket.disconnect();
-                            this.setState({username: ""});
-                        }
-                        }/>
+                            this.state.socket.disconnect();
+                            this.authenticate(false, "");
+                        }}/>
                     )}/>
                 </Router>
             </React.Fragment>

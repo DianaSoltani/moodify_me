@@ -18,16 +18,19 @@ class Home extends Component
     registerSocketListeners()
     {
         const {socket, username} = this.props;
-        socket.on("connect", (data) => {
+        socket.on("connect", (data) =>
+        {
             if (data !== undefined)
                 console.log(data.username + " has come online");
         });
 
-        socket.on("new_user", (data) => {
+        socket.on("new_user", (data) =>
+        {
             this.setState({rooms: [...this.state.rooms, {roomName: data.username, messages: []}]});
         });
 
-        socket.on("room_opened", ({roomName}) => {
+        socket.on("room_opened", ({roomName}) =>
+        {
             const usersInRoom = roomName.split(" ");
             if (usersInRoom.includes(username) && !this.state.joinedRooms.includes(roomName))
             {
@@ -39,9 +42,11 @@ class Home extends Component
                 this.setState({rooms: [...this.state.rooms, {roomName: roomName, messages: []}]});
         });
 
-        socket.on("new_message", ({messageData}) => {
+        socket.on("new_message", ({messageData}) =>
+        {
             this.setState({
-                rooms: this.state.rooms.map(room => {
+                rooms: this.state.rooms.map(room =>
+                {
                     if (room.roomName === messageData.room)
                         room.messages = [...room.messages, messageData.message];
                     return room;
@@ -77,7 +82,8 @@ class Home extends Component
         });
     };
 
-    joinRoom = (roomName, setActive) => {
+    joinRoom = (roomName, setActive) =>
+    {
         const isFirstJoin = !this.state.joinedRooms.includes(roomName);
         this.setState({
             activeRoom: setActive ? roomName : this.state.activeRoom,
@@ -86,7 +92,8 @@ class Home extends Component
         this.props.socket.emit("join", {username: this.props.username, room: roomName, is_first_join: isFirstJoin});
     };
 
-    handleRoomClicked = roomClicked => {
+    handleRoomClicked = roomClicked =>
+    {
         if (roomClicked === this.state.activeRoom)
             return;
         // another user name was likely clicked
@@ -107,7 +114,8 @@ class Home extends Component
         this.joinRoom(roomName, true);
     };
 
-    handleSearched = searchQuery => {
+    handleSearched = searchQuery =>
+    {
         if (searchQuery === '')
             this.setState({visibleRooms: this.state.joinedRooms});
         else
@@ -138,7 +146,8 @@ class Home extends Component
                     room={this.state.rooms.find(room => room.roomName === this.state.activeRoom)}/>
             </div>
             <SendMessage sendMessage={(message) => this.sendMessage(message)} socket={this.props.socket}
-                         isRoomSelected={() => {
+                         isRoomSelected={() =>
+                         {
                              return (this.state.activeRoom !== "")
                          }}/>
         </div>
