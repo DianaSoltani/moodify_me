@@ -1,6 +1,24 @@
-venv
-*.pyc
-staticfiles
+.idea
+server/__pycache__/
+.vscode/
+journal/
+diagnostic.data/
+Github.VisualStudio*
+*/venv/
+server/secret.py
+
+# dependencies
+moodify-ui/app/node_modules
+
+# testing
+moodify-ui/app/coverage
+
+# production
+moodify-ui/app/build
+
+# misc
+.DS_Store
 .env
-db.sqlite3
-getting-started/*
+moodify-ui/npm-debug.log*
+moodify-ui/yarn-debug.log*
+moodify-ui/yarn-error.log*
