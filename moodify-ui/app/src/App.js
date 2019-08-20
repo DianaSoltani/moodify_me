@@ -65,7 +65,7 @@ class App extends Component
 
     createSocket()
     {
-        return io("http://localhost:5000");
+        return io();
     }
 
     renderLandingPage()
