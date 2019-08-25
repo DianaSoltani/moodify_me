@@ -6,8 +6,8 @@ eventlet==0.25.0
 Flask==1.0.3
 Flask-Login==0.4.1
 Flask-SocketIO==4.1.0
-gunicorn==19.9.0
 greenlet==0.4.15
+gunicorn==19.9.0
 itsdangerous==1.1.0
 Jinja2==2.10.1
 MarkupSafe==1.1.1
