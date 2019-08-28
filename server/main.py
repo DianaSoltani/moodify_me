@@ -2,7 +2,7 @@
 import os
 
 from argon2 import PasswordHasher
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from flask_socketio import SocketIO, emit, join_room
 # Import the database
