@@ -10,8 +10,7 @@ from pymongo import MongoClient
 
 # Our current file is represented as "__name__". So we want
 # Flask to use this file to create the web application.
-app = Flask(__name__, static_folder="../moodify-ui/app/build/static",
-            template_folder="../moodify-ui/app/build")
+app = Flask(__name__)
 app.secret_key = os.urandom(24)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -29,7 +28,7 @@ db = dbclient.profiles
 
 @app.route("/")
 def start():
-    return render_template("index.html")
+    return "Successfully deployed backend!"
 
 
 @login_manager.user_loader
