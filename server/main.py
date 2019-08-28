@@ -1,7 +1,6 @@
 # Import Flask module to create a web server
 import os
 
-import secret
 from argon2 import PasswordHasher
 from flask import Flask, request, jsonify, render_template
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
@@ -24,7 +23,7 @@ pwd_hasher = PasswordHasher(
 socketio = SocketIO(app)
 
 # logs onto mongodb"s database, we are using the atlas client
-dbclient = MongoClient(secret.secret_key)
+dbclient = MongoClient(os.environ['MONGO_URI'])
 db = dbclient.profiles
 
 
