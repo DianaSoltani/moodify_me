@@ -1,9 +1,8 @@
 # Import Flask module to create a web server
 import os
 
-import secret
 from argon2 import PasswordHasher
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from flask_socketio import SocketIO, emit, join_room
 # Import the database
@@ -11,8 +10,7 @@ from pymongo import MongoClient
 
 # Our current file is represented as "__name__". So we want
 # Flask to use this file to create the web application.
-app = Flask(__name__, static_folder="../moodify-ui/app/build/static",
-            template_folder="../moodify-ui/app/build")
+app = Flask(__name__)
 app.secret_key = os.urandom(24)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -24,13 +22,18 @@ pwd_hasher = PasswordHasher(
 socketio = SocketIO(app)
 
 # logs onto mongodb"s database, we are using the atlas client
-dbclient = MongoClient(secret.secret_key)
+try:
+    dbclient = MongoClient(os.environ["MONGO_URI"])
+except KeyError:
+    import secret
+
+    dbclient = MongoClient(secret.secret_key)
 db = dbclient.profiles
 
 
 @app.route("/")
 def start():
-    return render_template("index.html")
+    return "Successfully deployed backend!"
 
 
 @login_manager.user_loader
