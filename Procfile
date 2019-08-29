@@ -1,1 +1,1 @@
-web: cd server && gunicorn main:app
+web: cd server && gunicorn --worker-class eventlet -w 1 --access-logfile - --error-logfile - main:app
