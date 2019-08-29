@@ -65,6 +65,8 @@ class App extends Component
 
     createSocket()
     {
+        if (process.env.NODE_ENV === "production")
+            return io(process.env.REACT_APP_API_URL);
         return io();
     }
 

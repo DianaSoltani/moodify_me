@@ -1,5 +1,11 @@
+from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from main import pwd_hasher
+
+pwd_hasher = PasswordHasher(
+    memory_cost=262144,
+    time_cost=3,
+    parallelism=4,
+)
 
 
 class User:
