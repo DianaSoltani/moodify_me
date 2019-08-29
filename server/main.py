@@ -1,28 +1,32 @@
 # Import Flask module to create a web server
 import os
 
-from argon2 import PasswordHasher
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from flask_socketio import SocketIO, emit, join_room
 # Import the database
 from pymongo import MongoClient
+from user import User, pwd_hasher
+
+CORS_ORIGIN = "https://moodify-me.netlify.com*"
 
 # Our current file is represented as "__name__". So we want
-# Flask to use this file to create the web application.
+# Flask to use this file to create the web application
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins=CORS_ORIGIN)
+CORS(app, resources={"*": {"origins": CORS_ORIGIN}})
 app.secret_key = os.urandom(24)
 login_manager = LoginManager()
 login_manager.init_app(app)
-pwd_hasher = PasswordHasher(
-    memory_cost=262144,
-    time_cost=3,
-    parallelism=4,
-)
-socketio = SocketIO(app)
 
 # logs onto mongodb"s database, we are using the atlas client
-dbclient = MongoClient(os.environ['MONGO_URI'])
+try:
+    dbclient = MongoClient(os.environ["MONGO_URI"])
+except KeyError:
+    import secret
+
+    dbclient = MongoClient(secret.secret_key)
 db = dbclient.profiles
 
 
@@ -158,6 +162,4 @@ def handle_join(data):
 
 # This will run the application
 if __name__ == "__main__":
-    from user import User
-
     socketio.run(app, debug=True)
